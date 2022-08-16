@@ -8,8 +8,6 @@ jobs:
     name: Test and Lint
     runs-on: ubuntu-20.04
     steps:
-      - name: Add Env Variable to Project
-        run: echo -en "SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }}" > /home/runner/work/drf-recipe-api/drf-recipe-api/.env
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with: 
@@ -18,6 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Test
-        run: docker-compose run --rm app sh -c "python manage.py test"
+        run: |
+          touch .env
+          echo SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }} >> .env
+          docker-compose run --rm app sh -c "python manage.py test"
       - name: Lint
-        run: docker-compose run --rm app sh -c "flake8"
+        run: |
+          touch .env
+          echo SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }} >> .env
+          docker-compose run --rm app sh -c "flake8"
