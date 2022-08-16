@@ -10,7 +10,6 @@ jobs:
     steps:
       - name: Add Env Variable to Project
         uses: SpicyPizza/create-envfile@v1.3
-        run: echo -en "SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }}" > ./app/
         with:
           envkey_SECRET_KEY: ${{ secrets.DJANGOAPP_SECRET }}
           directory: app
