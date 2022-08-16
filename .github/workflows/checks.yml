@@ -8,13 +8,11 @@ jobs:
     name: Test and Lint
     runs-on: ubuntu-20.04
     steps:
-      - name: Create app dir
-        run: mkdir app
       - name: Add Env Variable to Project
         uses: SpicyPizza/create-envfile@v1.3
         with:
           envkey_SECRET_KEY: ${{ secrets.DJANGOAPP_SECRET }}
-          directory: app
+          directory: /home/runner/work/drf-recipe-api/drf-recipe-api/
           file_name: .env
           fail_on_empty: true
       - name: Login to Docker Hub
