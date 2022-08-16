@@ -17,11 +17,11 @@ jobs:
         uses: actions/checkout@v2
       - name: Test
         run: |
-          touch .env
+          touch .env && \
           echo SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }} >> .env && \
           docker-compose run --rm app sh -c "python manage.py test"
       - name: Lint
         run: |
-          touch .env
+          touch .env && \
           echo SECRET_KEY=${{ secrets.DJANGOAPP_SECRET }} >> .env && \
           docker-compose run --rm app sh -c "flake8"
