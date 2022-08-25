@@ -1,3 +1,13 @@
+# Django
 Django>=3.2.4,<3.3
 djangorestframework>=3.12.4,<3.13
+drf-spectacular>=0.15.1,<0.16
+
+# DB
+psycopg2>=2.8.6,<2.9
+
+# Config
 python-decouple
+
+# Testing
+faker
