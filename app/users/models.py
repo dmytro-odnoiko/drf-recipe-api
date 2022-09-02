@@ -11,6 +11,7 @@ from django.dispatch import receiver
 
 from core.utils import image_filepath
 
+
 class UserManager(BaseUserManager):
     """Manager for users."""
 
@@ -63,11 +64,10 @@ class Profile(models.Model):
 
     def __repr__(self):
         return 'profile'
-    
+
 
 @receiver(post_save, sender=User)
 def create_empty_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
         instance.profile.save()
-    

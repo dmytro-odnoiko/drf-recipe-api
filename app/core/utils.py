@@ -1,6 +1,7 @@
 import uuid
 import os
 
+
 def image_filepath(instance, filename):
     """Generate filepath for image."""
     ext = os.path.splitext(filename)[1]

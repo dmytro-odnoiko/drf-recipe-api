@@ -14,6 +14,7 @@ CREATE_USER_URL = reverse('user:create')
 TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
+
 class PrivateUserApiTests(TestCase):
     """Test API requesta that require authentication"""
 
@@ -31,7 +32,6 @@ class PrivateUserApiTests(TestCase):
 
     def test_retrieve_profile_success(self):
         """Test retrieving profile for logged user."""
-        
         res = self.client.get(self.profile_url)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -59,6 +59,6 @@ class PrivateUserApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(user_profile.bio, updated_user.get('bio'))
         self.assertEqual(
-            user_profile.short_desc, 
+            user_profile.short_desc,
             updated_user.get('short_desc')
         )

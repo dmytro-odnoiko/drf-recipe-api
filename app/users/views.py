@@ -1,8 +1,6 @@
 """
 Views for the user API.
 """
-from functools import partial
-
 from rest_framework import authentication, generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
@@ -45,7 +43,7 @@ class ProfileView(APIView):
         profile = Profile.objects.get(pk=pk)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
-    
+
     def patch(self, request, pk, format=None):
         profile = Profile.objects.get(pk=pk)
         serializer = ProfileSerializer(

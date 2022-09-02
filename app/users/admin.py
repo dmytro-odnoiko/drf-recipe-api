@@ -49,13 +49,13 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ['get_user_email', 'bio', 'short_desc', 'image']
     fieldsets = (
         (
-            None, 
-            {'fields': ('id','get_user_email', 'bio', 'short_desc', 'image')}
+            None,
+            {'fields': ('id', 'get_user_email', 'bio', 'short_desc', 'image')}
         ),
 
     )
     readonly_fields = ['id', 'get_user_email']
-    
+
     def has_add_permission(self, request, obj=None):
         return False
 
