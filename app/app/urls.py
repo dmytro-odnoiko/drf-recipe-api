@@ -28,6 +28,7 @@ urlpatterns = [
         name='api-docs',
     ),
     path('api/users/', include('users.urls')),
+    path('api/recipe/', include('recipes.urls')),
 ]
 
 if settings.DEBUG:
