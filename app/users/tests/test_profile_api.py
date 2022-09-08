@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from users.models import Profile
+from users.serializers import ProfileSerializer
 
 CREATE_USER_URL = reverse('users:create')
 TOKEN_URL = reverse('users:token')
@@ -34,12 +35,11 @@ class PrivateUserApiTests(TestCase):
         """Test retrieving profile for logged user."""
         res = self.client.get(self.profile_url)
 
+        serializer = ProfileSerializer(
+            Profile.objects.get(user=self.fake_user)
+        )
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
-            'bio': '',
-            'image': None,
-            'short_desc': '',
-        })
+        self.assertEqual(res.data, serializer.data)
 
     def test_post_profile_not_allowed(self):
         """Test POST is not allowed for the profile endpoint"""

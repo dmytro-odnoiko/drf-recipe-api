@@ -4,7 +4,6 @@ Views for the user API.
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from users.models import Profile
 from users.permissions import IsOwnerOrReadOnly
@@ -31,8 +30,9 @@ class ManageUserView(generics.RetrieveUpdateAPIView):
         return self.request.user
 
 
-class ProfileView(APIView):
+class ProfileView(generics.GenericAPIView):
     """View and update user profile."""
+    serializer_class = ProfileSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
     def get(self, request, pk, format=None):

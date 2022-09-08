@@ -60,16 +60,14 @@ class AuthTokenSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     """Searializer for the user profile."""
-    user_email = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field='email',
-    )
-    user_name = serializers.SlugRelatedField(
-        many=False,
-        read_only=True,
-        slug_field='name',
-    )
+    user_email = serializers.SerializerMethodField()
+    user_name = serializers.SerializerMethodField()
+
+    def get_user_email(self, obj):
+        return obj.user.email
+
+    def get_user_name(self, obj):
+        return obj.user.name
 
     class Meta:
         model = Profile
