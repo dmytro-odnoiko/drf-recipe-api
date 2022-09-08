@@ -5,7 +5,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from core import models
+from users import models
 
 
 class UserAdmin(BaseUserAdmin):
@@ -43,4 +43,29 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+class ProfileAdmin(admin.ModelAdmin):
+    """Define the admin pages for profiles."""
+    ordering = ['id']
+    list_display = ['get_user_email', 'bio', 'short_desc', 'image']
+    fieldsets = (
+        (
+            None,
+            {'fields': ('id', 'get_user_email', 'bio', 'short_desc', 'image')}
+        ),
+
+    )
+    readonly_fields = ['id', 'get_user_email']
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_user_email(self, obj):
+        return obj.user.email
+    get_user_email.short_description = 'email'
+
+
 admin.site.register(models.User, UserAdmin)
+admin.site.register(models.Profile, ProfileAdmin)
