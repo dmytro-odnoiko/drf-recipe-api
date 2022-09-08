@@ -10,9 +10,9 @@ from rest_framework.test import APIClient
 
 from users.models import Profile
 
-CREATE_USER_URL = reverse('user:create')
-TOKEN_URL = reverse('user:token')
-ME_URL = reverse('user:me')
+CREATE_USER_URL = reverse('users:create')
+TOKEN_URL = reverse('users:token')
+ME_URL = reverse('users:me')
 
 
 class PrivateUserApiTests(TestCase):
@@ -26,7 +26,7 @@ class PrivateUserApiTests(TestCase):
         self.client.force_authenticate(user=self.fake_user)
         profile = Profile.objects.get(user_id=self.fake_user.id)
         self.profile_url = reverse(
-            'user:profile',
+            'users:profile',
             kwargs={'pk': profile.id}
         )
 
