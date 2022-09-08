@@ -28,9 +28,13 @@ For Windows:
 ```powerahell
 docker-compose up
 ```
-### 2. Some useful commands
+### 2. Project usage.
+After running the project, open http://127.0.0.1:8000/api/docs and use Swagger UI to work with API. Prerequisites: create user with user API in Swagger page.Then get token for auth and add jwt token to authorize block. Now you can create, update and delete recipes. 
 
-#### 2.1 Docker
+To get access to Django admin: create superuser(see command below) and login at http://127.0.0.1:8000/admin with your credentials to access to admin panel.
+### 3. Some useful commands
+
+#### 3.1 Docker
 **Build app container via docker-compose:**
 
 For Linux/Mac OS: 
@@ -74,7 +78,7 @@ For Windows:
 ```powerahell
 docker exec -ti drf-recipe-api_db_1 sh
 ```
-#### 2.2 Testing and linting
+#### 3.2 Testing and linting
 **Run tests:**
 
 For Linux/Mac OS: 
@@ -96,7 +100,7 @@ For Windows:
 ```powerahell
 docker-compose run --rm app sh -c "flake8"
 ```
-#### 2.3 Django 
+#### 3.3 Django 
 **Start Django app:**
 
 For Linux/Mac OS: 
