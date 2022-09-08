@@ -72,7 +72,7 @@ class PublicUserApiTests(TestCase):
             fake_user.as_dict(name_needed=False)
         )
 
-        self.assertIn('token', res.data)
+        self.assertIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_create_token_bad_credentials(self):
@@ -86,8 +86,8 @@ class PublicUserApiTests(TestCase):
             fake_user.as_dict(name_needed=False)
         )
 
-        self.assertNotIn('token', res.data)
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_token_blank_password(self):
         """Test posting a blank password return an error"""
@@ -97,7 +97,7 @@ class PublicUserApiTests(TestCase):
             self.fake_user.as_dict(name_needed=False)
         )
 
-        self.assertNotIn('token', res.data)
+        self.assertNotIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_retrieve_user_anauthorized(self):
