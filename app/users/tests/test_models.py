@@ -7,8 +7,10 @@ from django.test import TestCase
 from core.tests.helpers.faker import faker
 from core.tests.helpers.fake_user import FakeUser
 
+from users.models import Profile
 
-class ModelTests(TestCase):
+
+class UserModelTests(TestCase):
     """Test models."""
 
     def test_create_user_with_email_successful(self):
@@ -49,3 +51,21 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+
+class ProfileModelTests(TestCase):
+    """Tests for profile model created by signal"""
+
+    def setUp(self):
+        """Create test user."""
+        self.fake_user = get_user_model().objects.create_user(
+            **FakeUser().as_dict()
+        )
+
+    def test_empty_profile_created(self):
+        """Test creating empty profile for user created."""
+        user_profile = Profile.objects.get(user_id=self.fake_user.id)
+        self.assertEqual(user_profile.user.id, self.fake_user.id)
+        self.assertEqual(user_profile.bio, '')
+        self.assertEqual(user_profile.image, '')
+        self.assertEqual(user_profile.short_desc, '')
