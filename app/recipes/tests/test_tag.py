@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 
 from recipes.models import Tag
 from recipes.serializers import TagSerializer
-from user.tests.test_user_api import create_user
+from users.tests.test_user_api import create_user
 
 from core.tests.helpers.faker import faker
 from core.tests.helpers.fake_user import FakeUser

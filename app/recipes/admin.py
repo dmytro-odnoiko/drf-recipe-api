@@ -1,6 +1,13 @@
 from django.contrib import admin
 from recipes.models import Recipe, Tag
 
+
 # Register your models here.
-admin.site.register(Recipe)
-admin.site.register(Tag)
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    pass
