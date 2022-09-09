@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+from users.models import Profile
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object."""
@@ -54,3 +56,19 @@ class AuthTokenSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    """Searializer for the user profile."""
+    user_email = serializers.SerializerMethodField()
+    user_name = serializers.SerializerMethodField()
+
+    def get_user_email(self, obj):
+        return obj.user.email
+
+    def get_user_name(self, obj):
+        return obj.user.name
+
+    class Meta:
+        model = Profile
+        fields = ['user_email', 'user_name', 'bio', 'short_desc', 'image']

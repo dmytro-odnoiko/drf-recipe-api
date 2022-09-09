@@ -10,9 +10,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-CREATE_USER_URL = reverse('user:create')
-TOKEN_URL = reverse('user:token')
-ME_URL = reverse('user:me')
+CREATE_USER_URL = reverse('users:create')
+TOKEN_URL = reverse('users:token')
+ME_URL = reverse('users:me')
 
 
 def create_user(**params):
@@ -72,7 +72,7 @@ class PublicUserApiTests(TestCase):
             fake_user.as_dict(name_needed=False)
         )
 
-        self.assertIn('token', res.data)
+        self.assertIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
 
     def test_create_token_bad_credentials(self):
@@ -86,8 +86,8 @@ class PublicUserApiTests(TestCase):
             fake_user.as_dict(name_needed=False)
         )
 
-        self.assertNotIn('token', res.data)
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertNotIn('access', res.data)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_create_token_blank_password(self):
         """Test posting a blank password return an error"""
@@ -97,7 +97,7 @@ class PublicUserApiTests(TestCase):
             self.fake_user.as_dict(name_needed=False)
         )
 
-        self.assertNotIn('token', res.data)
+        self.assertNotIn('access', res.data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_retrieve_user_anauthorized(self):
@@ -131,7 +131,7 @@ class PrivateUserApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_update_user_profile(self):
+    def test_update_user(self):
         """Test updating the user profile for the authenticated user."""
         updated_user = {
             'name': faker.first_name(),
