@@ -19,3 +19,6 @@ venv.bak/
 
 # VS code
 .vscode/
+
+# Meld merging tool
+*.orig
