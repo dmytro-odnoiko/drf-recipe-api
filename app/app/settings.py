@@ -14,6 +14,10 @@ from datetime import timedelta
 from os import environ
 from pathlib import Path
 
+from celery.schedules import crontab
+
+from core.tasks import send_email_last_login_count, periodic_print
+
 from django.utils.translation import gettext_lazy as _
 
 
@@ -47,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'drf_spectacular',
+    'django_celery_beat',
     'users',
     'recipes',
 ]
@@ -121,6 +126,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
+LANGUAGES = (
+    ('uk', _('Ukrainian')),
+    ('en', _('English')),
+)
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -145,6 +155,13 @@ STATIC_ROOT = '/vol/web/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = environ.get('EMAIL_HOST_PASSWORD')
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -172,7 +189,25 @@ SPECTACULAR_SETTINGS = {
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
 
-LANGUAGES = (
-    ('uk', _('Ukrainian')),
-    ('en', _('English')),
-)
+CELERY = {
+    'BROKER_URL': environ['CELERY_BROKER_URL'],
+    'CELERY_IMPORTS': ('worker.tasks', ),
+    'CELERY_TASK_SERIALIZER': 'json',
+    'CELERY_RESULT_SERIALIZER': 'json',
+    'CELERY_ACCEPT_CONTENT': ['json'],
+}
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+
+# Example of usage standart Celery beat parameters 
+# CELERY_BEAT_SCHEDULE = {
+#     "send_email_last_login_count": {
+#         "task": "send_email_last_login_count",
+#         "schedule": crontab(minute='*/5'),
+#     },
+#     "periodic_print": {
+#         "task": "periodic_print",
+#         "schedule": crontab(minute='*/5'),
+#     },
+# }

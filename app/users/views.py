@@ -1,6 +1,7 @@
 """
 Views for the user API.
 """
+
 from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
@@ -10,12 +11,19 @@ from users.permissions import IsOwnerOrReadOnly
 from users.serializers import (AuthTokenSerializer, ProfileSerializer,
                                UserSerializer)
 
+from core.tasks import send_registered_emails
 
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system."""
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        created = super().create(request, *args, **kwargs)
+        if created.status_code == status.HTTP_201_CREATED:
+            send_registered_emails.delay(emails=[created.data.get('email')])
+        
+        return created
 
 class CreateTokenView(ObtainAuthToken):
     """Create a new auth token for user."""

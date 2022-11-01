@@ -22,3 +22,4 @@ venv.bak/
 
 # Meld merging tool
 *.orig
+app/django_celery_beat.schedulers:DatabaseScheduler
