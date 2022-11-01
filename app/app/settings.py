@@ -14,12 +14,10 @@ from datetime import timedelta
 from os import environ
 from pathlib import Path
 
-from celery.schedules import crontab
-
-from core.tasks import send_email_last_login_count, periodic_print
-
+from core.tasks import periodic_print, send_email_last_login_count
 from django.utils.translation import gettext_lazy as _
 
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -124,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = (
     ('uk', _('Ukrainian')),

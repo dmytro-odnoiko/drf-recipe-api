@@ -13,7 +13,6 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
 @app.task(bind=True, autoretry_for=(Exception,), retry_backoff=5,
-          retry_kwargs={'max_retries':3})
+          retry_kwargs={'max_retries': 3})
 def debug_task(self):
     print('Request: {0!r}'.format(self.request))
-

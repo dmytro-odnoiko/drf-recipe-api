@@ -13,6 +13,7 @@ from users.serializers import (AuthTokenSerializer, ProfileSerializer,
 
 from core.tasks import send_registered_emails
 
+
 class CreateUserView(generics.CreateAPIView):
     """Create a new user in the system."""
     serializer_class = UserSerializer
@@ -22,8 +23,8 @@ class CreateUserView(generics.CreateAPIView):
         created = super().create(request, *args, **kwargs)
         if created.status_code == status.HTTP_201_CREATED:
             send_registered_emails.delay(emails=[created.data.get('email')])
-        
         return created
+
 
 class CreateTokenView(ObtainAuthToken):
     """Create a new auth token for user."""
