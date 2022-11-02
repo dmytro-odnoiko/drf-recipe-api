@@ -23,6 +23,13 @@ jobs:
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env && \
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env && \
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env && \
+          echo "RABBITMQ_DEFAULT_USER=${{ secrets.RABBITMQ_DEFAULT_USER }}" >> .env && \
+          echo "RABBITMQ_DEFAULT_PASS=${{ secrets.RABBITMQ_DEFAULT_PASS }}" >> .env && \
+          echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env && \
+          echo "FLOWER_BROKER=${{ secrets.FLOWER_BROKER }}" >> .env && \
+          echo "FLOWER_BASIC_AUTH=${{ secrets.FLOWER_BASIC_AUTH }}" >> .env && \
+          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env && \
+          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env && \
           docker-compose run --rm app sh -c "python manage.py wait_for_db && \
           python manage.py test"
       - name: Lint
@@ -33,4 +40,11 @@ jobs:
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env && \
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env && \
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env && \
+          echo "RABBITMQ_DEFAULT_USER=${{ secrets.RABBITMQ_DEFAULT_USER }}" >> .env && \
+          echo "RABBITMQ_DEFAULT_PASS=${{ secrets.RABBITMQ_DEFAULT_PASS }}" >> .env && \
+          echo "CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}" >> .env && \
+          echo "FLOWER_BROKER=${{ secrets.FLOWER_BROKER }}" >> .env && \
+          echo "FLOWER_BASIC_AUTH=${{ secrets.FLOWER_BASIC_AUTH }}" >> .env && \
+          echo "EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }}" >> .env && \
+          echo "EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}" >> .env && \
           docker-compose run --rm app sh -c "flake8"
