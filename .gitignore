@@ -19,3 +19,7 @@ venv.bak/
 
 # VS code
 .vscode/
+
+# Meld merging tool
+*.orig
+app/django_celery_beat.schedulers:DatabaseScheduler
