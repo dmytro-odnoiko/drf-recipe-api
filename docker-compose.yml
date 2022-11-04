@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   app:
+    image: &drf-recipe-core grizzlo/drf-recipe-api:latest
     build: 
       context: .
       args: 
@@ -42,6 +43,7 @@ services:
       - 15672:15672
 
   worker:
+      image: *drf-recipe-core
       restart: always
       build:
         context: .
@@ -59,6 +61,7 @@ services:
         - db
         - app
   beat:
+      image: *drf-recipe-core
       restart: always
       build:
         context: .
