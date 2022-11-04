@@ -1,3 +1,9 @@
+import os
+import tempfile
+
+from PIL import Image
+
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -5,15 +11,14 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from recipes.models import Recipe, Tag
-from recipes.serializers import RecipeSerializer, RecipeDetailSerializer
-
-from users.tests.test_user_api import create_user
-
-from core.tests.helpers.faker import faker
 from core.tests.helpers.fake_user import FakeUser
+from core.tests.helpers.faker import faker
+
+from recipes.models import Recipe, Tag
+from recipes.serializers import RecipeDetailSerializer, RecipeSerializer
 from recipes.tests.helpers.fake_recipe import FakeRecipe
 
+from users.tests.test_user_api import create_user
 
 RECIPES_URL = reverse('recipes:recipe-list')
 
@@ -274,3 +279,79 @@ class PrivateRecipeAPITests(TestCase):
         recipe.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(recipe.tags.count(), 0)
+
+    def test_recipe_image_upload_on_create(self):
+        """Test adding image with a new recipe."""
+        new_recipe = FakeRecipe(user=self.fake_user).__dict__
+
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as image_file:
+            img = Image.new('RGB', (10, 10))
+            img.save(image_file, format='JPEG')
+            image_file.seek(0)
+            new_recipe.update({'image': image_file})
+            res = self.client.post(RECIPES_URL, new_recipe, format='multipart')
+
+        recipe_obj = Recipe.objects.get(id=res.data.get('id'))
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertIn('image', res.data)
+        self.assertTrue(os.path.exists(recipe_obj.image.path))
+        recipe_obj.image.delete()
+
+    def test_recipe_image_upload_update(self):
+        """Test adding image with update recipe."""
+        new_recipe = create_recipe(user=self.fake_user)
+
+        with tempfile.NamedTemporaryFile(suffix='.jpg') as image_file,\
+             tempfile.NamedTemporaryFile(suffix='.jpg') as update_image_file:
+
+            img = Image.new('RGB', (10, 10))
+            img.save(image_file, format='JPEG')
+            image_file.seek(0)
+            new_recipe.image = image_file.name
+            new_recipe.save()
+
+            img = Image.new('RGB', (11, 11))
+            img.save(update_image_file, format='JPEG')
+            update_image_file.seek(0)
+            res = self.client.patch(
+                reverse('recipes:recipe-detail', args=[new_recipe.id]),
+                {'image': update_image_file},
+                format='multipart'
+            )
+
+        new_recipe.refresh_from_db()
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('image', res.data)
+        self.assertTrue(os.path.exists(new_recipe.image.path))
+        new_recipe.image.delete()
+
+    def test_upload_bad_request(self):
+        """Testing uploading invalid image."""
+        new_recipe = FakeRecipe(user=self.fake_user).__dict__
+        new_recipe.update({'image': faker.word()})
+        res = self.client.post(RECIPES_URL, new_recipe, format='multipart')
+
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_filter_by_tags(self):
+        """Test filtering recipes by tags."""
+        r1 = create_recipe(user=self.fake_user)
+        r2 = create_recipe(user=self.fake_user)
+        tag1 = Tag.objects.create(user=self.fake_user, name=faker.word())
+        tag2 = Tag.objects.create(user=self.fake_user, name=faker.word())
+        r1.tags.add(tag1)
+        r2.tags.add(tag2)
+        r3 = create_recipe(user=self.fake_user)
+
+        res = self.client.get(
+            RECIPES_URL,
+            {'tags': f'{tag1.id},{tag2.id}'},
+        )
+
+        s1 = RecipeSerializer(r1)
+        s2 = RecipeSerializer(r2)
+        s3 = RecipeSerializer(r3)
+
+        self.assertIn(s1.data, res.data)
+        self.assertIn(s2.data, res.data)
+        self.assertNotIn(s3.data, res.data)
