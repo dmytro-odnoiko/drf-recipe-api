@@ -14,6 +14,7 @@ from datetime import timedelta
 from os import environ
 from pathlib import Path
 
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -160,4 +161,8 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=720),
     'ROTATE_REFRESH_TOKENS': True,
     'UPDATE_LAST_LOGIN': False,
+}
+
+SPECTACULAR_SETTINGS = {
+    'COMPONENT_SPLIT_REQUEST': True
 }
