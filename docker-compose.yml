@@ -18,20 +18,73 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     depends_on:
-      - db 
+      - db
+      - broker
 
   db: 
     env_file:
       - .env
     image: postgres:13-alpine
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
-    #   interval: 1s
-    #   timeout: 2s
-    #   retries: 5
+    healthcheck:
+      test: sh pg_isready -U ${POSTGRES_USER}
+      interval: 1s
+      timeout: 2s
+      retries: 5
     volumes: 
       - dev-db-data:/var/lib/postgres/data
 
+  broker:
+    image: rabbitmq:management
+    env_file: 
+      - .env
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  worker:
+      restart: always
+      build:
+        context: .
+      env_file:
+        - .env
+      command: sh -c "celery -A app worker -l info "
+      deploy:
+        replicas: 1
+        restart_policy:
+          condition: on-failure
+      volumes:
+        - ./app:/app
+      depends_on:
+        - broker
+        - db
+        - app
+  beat:
+      restart: always
+      build:
+        context: .
+      env_file:
+        - .env
+      command: sh -c "celery -A app beat -l info -s django_celery_beat.schedulers:DatabaseScheduler"
+      deploy:
+        restart_policy:
+          condition: on-failure
+      volumes:
+        - ./app:/app
+      depends_on:
+        - broker
+        - db
+        - app
+  
+  flower:
+    image: zoomeranalytics/flower:0.9.1-4.0.2
+    restart: "no"
+    command: sh -c "sleep 5 && flower --logging='INFO'" 
+    env_file: 
+      - .env
+    ports:
+      - "5555:5555"
+    depends_on:
+      - broker
 
 volumes:
   dev-db-data:

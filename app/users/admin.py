@@ -13,7 +13,7 @@ class UserAdmin(BaseUserAdmin):
     ordering = ['id']
     list_display = ['email', 'name']
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
+        (None, {'fields': ('name_en', 'name_uk', 'email', 'password')}),
         (
             _('Permissions'),
             {
@@ -50,7 +50,9 @@ class ProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             None,
-            {'fields': ('id', 'get_user_email', 'bio', 'short_desc', 'image')}
+            {'fields': ('id', 'get_user_email', 'bio_en', 'bio_uk',
+                        'short_desc_en', 'short_desc_uk', 'image'
+                        )}
         ),
 
     )
